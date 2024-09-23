@@ -27,12 +27,7 @@ class AuthServiceTest {
     void signUpTest() {
 
         // given
-        SignupDTO userinfo = SignupDTO.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .name(NAME)
-                .email(EMAIL)
-                .build();
+        SignupDTO userinfo = new SignupDTO(USERNAME, PASSWORD, NAME, EMAIL);
 
         // when
         String result = assertDoesNotThrow(() -> authService.signUp(userinfo));
@@ -46,19 +41,8 @@ class AuthServiceTest {
     void duplicateUsernameTest() {
 
         // given
-        SignupDTO userinfo = SignupDTO.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .name(NAME)
-                .email(EMAIL)
-                .build();
-
-        SignupDTO duplicateUserIdUser = SignupDTO.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .name(NAME)
-                .email("UniqueEmail@example.com")
-                .build();
+        SignupDTO userinfo = new SignupDTO(USERNAME, PASSWORD, NAME, EMAIL);
+        SignupDTO duplicateUserIdUser = new SignupDTO(USERNAME, PASSWORD, NAME, "UniqueEmail@example.com");
 
         // when
         assertDoesNotThrow(() -> authService.signUp(userinfo));
@@ -74,23 +58,12 @@ class AuthServiceTest {
     void duplicateEmailTest() {
 
         // given
-        SignupDTO userinfo = SignupDTO.builder()
-                .username(USERNAME)
-                .password(PASSWORD)
-                .name(NAME)
-                .email(EMAIL)
-                .build();
-
-        SignupDTO duplicateUserIdUser = SignupDTO.builder()
-                .username("UniqueUsername")
-                .password(PASSWORD)
-                .name(NAME)
-                .email(EMAIL)
-                .build();
+        SignupDTO userinfo = new SignupDTO(USERNAME, PASSWORD, NAME, EMAIL);
+        SignupDTO duplicateEmailUser = new SignupDTO("UniqueUsername", PASSWORD, NAME, EMAIL);
 
         // when
         assertDoesNotThrow(() -> authService.signUp(userinfo));
-        String result = assertThrows(DuplicateException.class, () -> authService.signUp(duplicateUserIdUser)).getMessage();
+        String result = assertThrows(DuplicateException.class, () -> authService.signUp(duplicateEmailUser)).getMessage();
 
         // then
         assertTrue(result.contains("[ERROR]"));
