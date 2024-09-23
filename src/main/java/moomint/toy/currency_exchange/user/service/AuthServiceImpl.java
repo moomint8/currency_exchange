@@ -29,22 +29,22 @@ public class AuthServiceImpl implements AuthService {
         try {
 
             // 중복된 로그인 아이디
-            if (userInfo.getUsername() != null && userRepository.existsByUsername(userInfo.getUsername())) {
+            if (userInfo.username() != null && userRepository.existsByUsername(userInfo.username())) {
                 log.info("{}Username is already in use", userInfo);
                 throw new DuplicateException("아이디");
             }
 
             // 중복된 이메일
-            if (userInfo.getEmail() != null && userRepository.existsByEmail(userInfo.getEmail())) {
+            if (userInfo.email() != null && userRepository.existsByEmail(userInfo.email())) {
                 log.info("{}Email is already in use", userInfo);
                 throw new DuplicateException("이메일");
             }
 
             User user = User.builder()
-                    .username(userInfo.getUsername())
-                    .password(bCryptPasswordEncoder.encode(userInfo.getPassword()))
-                    .name(userInfo.getName())
-                    .email(userInfo.getEmail())
+                    .username(userInfo.username())
+                    .password(bCryptPasswordEncoder.encode(userInfo.password()))
+                    .name(userInfo.name())
+                    .email(userInfo.email())
                     .userRole(UserRole.ROLE_NORMAL)
                     .build();
 
