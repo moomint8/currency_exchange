@@ -9,7 +9,7 @@ import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -45,16 +45,16 @@ public class User {
     // 회원 생성일
     @CreatedDate
     @Column(name = "CREATED_AT")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     // 회원 수정일
     @UpdateTimestamp
     @Column(name = "UPDATED_AT")
-    private LocalDate updatedAt = LocalDate.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     // 회원 탈퇴일
     @Column(name = "DELETED_AT")
-    private LocalDate deletedAt;
+    private LocalDateTime deletedAt;
 
     // 유저 권한
     @Column(name = "USER_ROLE")
@@ -62,8 +62,8 @@ public class User {
     private UserRole userRole;
 
     @Builder
-    public User(String username, String password, String name, String email, LocalDate createdAt, LocalDate updatedAt,
-                LocalDate deletedAt, UserRole userRole) {
+    public User(String username, String password, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt,
+                LocalDateTime deletedAt, UserRole userRole) {
         this.username = username;
         this.password = password;
         this.name = name;
