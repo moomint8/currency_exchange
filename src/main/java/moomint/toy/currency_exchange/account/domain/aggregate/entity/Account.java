@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @SQLDelete(sql = "UPDATE tbl_account SET DELETED_AT = CURRENT_DATE WHERE ID = ?")
 @SQLRestriction("DELETED_AT IS NULL")
@@ -58,8 +57,9 @@ public class Account {
     private User user;
 
     @Builder
-    public Account(String accountNo, String currency, BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt,
-                   LocalDateTime deletedAt, User user) {
+    public Account(Long id, String accountNo, String currency, BigDecimal balance, LocalDateTime createdAt,
+                   LocalDateTime updatedAt, LocalDateTime deletedAt, User user) {
+        this.id = id;
         this.accountNo = accountNo;
         this.currency = currency;
         this.balance = balance;
