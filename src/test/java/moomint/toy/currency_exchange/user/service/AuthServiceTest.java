@@ -1,7 +1,11 @@
 package moomint.toy.currency_exchange.user.service;
 
 import moomint.toy.currency_exchange.common.Exception.DuplicateException;
+import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
+import moomint.toy.currency_exchange.commonSetting.CreateLoggedInUser;
+import moomint.toy.currency_exchange.commonSetting.TestUserInfo;
 import moomint.toy.currency_exchange.user.dto.SignupDTO;
+import moomint.toy.currency_exchange.user.dto.UserInfoDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class AuthServiceTest {
 
-    private final String USERNAME = "TestUserID";
-    private final String PASSWORD = "TestPassword";
-    private final String NAME = "TestName";
-    private final String EMAIL = "TestEmail@example.com";
+    private final String USERNAME = TestUserInfo.USERNAME;
+    private final String PASSWORD = TestUserInfo.PASSWORD;
+    private final String NAME = TestUserInfo.NAME;
+    private final String EMAIL = TestUserInfo.EMAIL;
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private CreateLoggedInUser createLoggedInUser;
 
     @DisplayName("회원가입 테스트")
     @Test
@@ -68,5 +75,29 @@ class AuthServiceTest {
         // then
         assertTrue(result.contains("[ERROR]"));
         assertTrue(result.contains("이메일"));
+    }
+
+    @DisplayName("현재 로그인 중인 계정 확인 테스트")
+    @Test
+    void getCurrentUserInfoTest() throws DuplicateException, NotLoggedInException {
+
+        // given
+        createLoggedInUser.settingNormal();
+
+        // when
+        UserInfoDTO userInfo = authService.getCurrentUserInfo();
+
+        // then
+        assertEquals(USERNAME, userInfo.username());
+        assertEquals(NAME, userInfo.name());
+        assertEquals(EMAIL, userInfo.email());
+    }
+
+    @DisplayName("로그인하지 않은 경우 예외 테스트")
+    @Test
+    void getCurrentUserWithoutLoginExceptionTest() {
+
+        // given, when, then
+        assertThrows(NotLoggedInException.class, () -> authService.getCurrentUserInfo());
     }
 }

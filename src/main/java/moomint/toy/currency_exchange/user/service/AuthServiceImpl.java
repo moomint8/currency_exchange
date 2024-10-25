@@ -2,11 +2,15 @@ package moomint.toy.currency_exchange.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import moomint.toy.currency_exchange.common.Exception.DuplicateException;
+import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
+import moomint.toy.currency_exchange.user.domain.aggregate.entity.CustomUserDetails;
 import moomint.toy.currency_exchange.user.domain.aggregate.entity.User;
 import moomint.toy.currency_exchange.user.domain.aggregate.enums.UserRole;
 import moomint.toy.currency_exchange.user.domain.repository.UserRepository;
 import moomint.toy.currency_exchange.user.dto.SignupDTO;
+import moomint.toy.currency_exchange.user.dto.UserInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +64,22 @@ public class AuthServiceImpl implements AuthService {
             log.error("Signup Unknown error: {}", e.getMessage());
             throw e;
         }
+    }
+
+    @Override
+    public UserInfoDTO getCurrentUserInfo() throws NotLoggedInException {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            throw new NotLoggedInException();
+        }
+
+        return new UserInfoDTO(
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getName(),
+                userDetails.getEmail()
+        );
     }
 }
