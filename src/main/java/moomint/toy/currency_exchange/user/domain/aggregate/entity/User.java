@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @SQLDelete(sql = "UPDATE tbl_user SET DELETED_AT = CURRENT_DATE WHERE ID = ?")
 @SQLRestriction("DELETED_AT IS NULL")
@@ -62,8 +61,9 @@ public class User {
     private UserRole userRole;
 
     @Builder
-    public User(String username, String password, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt,
-                LocalDateTime deletedAt, UserRole userRole) {
+    public User(Long id, String username, String password, String name, String email, LocalDateTime createdAt,
+                LocalDateTime updatedAt, LocalDateTime deletedAt, UserRole userRole) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
