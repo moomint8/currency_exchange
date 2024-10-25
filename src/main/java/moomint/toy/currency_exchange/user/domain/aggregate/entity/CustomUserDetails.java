@@ -34,6 +34,12 @@ public class CustomUserDetails implements UserDetails {
         return user.getPassword();
     }
 
+    public Long getId() { return user.getId(); }
+
+    public String getName() { return user.getName(); }
+
+    public String getEmail() { return user.getEmail(); }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
