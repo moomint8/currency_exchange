@@ -1,5 +1,6 @@
 package moomint.toy.currency_exchange.common.util;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.core.env.Environment;
@@ -30,5 +31,22 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public Boolean isExpired(String token) {
+
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+    }
+
+    public String getUsername(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 }
