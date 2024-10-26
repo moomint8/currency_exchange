@@ -1,5 +1,6 @@
 package moomint.toy.currency_exchange.common.config;
 
+import moomint.toy.currency_exchange.common.filter.JwtFilter;
 import moomint.toy.currency_exchange.common.filter.LoginFilter;
 import moomint.toy.currency_exchange.common.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,7 @@ public class SecurityConfig {
         // 경로별 인가
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/auth/signup").permitAll()
+                .requestMatchers("/api/health-check").permitAll()
                 .anyRequest().authenticated()
         );
 
@@ -61,6 +63,9 @@ public class SecurityConfig {
 
         // http Basic 인증 방식 Disable
         http.httpBasic(AbstractHttpConfigurer::disable);
+
+        // JWT Filter
+        http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
         return http.build();
     }
