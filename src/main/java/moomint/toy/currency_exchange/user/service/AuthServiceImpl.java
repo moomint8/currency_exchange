@@ -34,13 +34,13 @@ public class AuthServiceImpl implements AuthService {
 
             // 중복된 로그인 아이디
             if (userInfo.username() != null && userRepository.existsByUsername(userInfo.username())) {
-                log.info("{}Username is already in use", userInfo);
+                log.info("Username '{}' is already in use", userInfo.username());
                 throw new DuplicateException("아이디");
             }
 
             // 중복된 이메일
             if (userInfo.email() != null && userRepository.existsByEmail(userInfo.email())) {
-                log.info("{}Email is already in use", userInfo);
+                log.info("Email '{}' is already in use", userInfo.email());
                 throw new DuplicateException("이메일");
             }
 
@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
 
             userRepository.save(user);
 
-            log.info("{}Created new user", userInfo);
+            log.info("Created new user [ id: {}, username: {} ]", user.getId(), user.getUsername());
 
             return "회원가입 성공";
 
