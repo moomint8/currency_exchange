@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
-            log.info("without token request");
+            log.info("without token request: {} {}", request.getMethod(), request.getRequestURL());
             filterChain.doFilter(request, response);
 
             return;
@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 토큰 유효 시간 검증
         if (jwtUtil.isExpired(token)) {
 
-            log.info("token expired");
+            log.info("token expired: {} {}", request.getMethod(), request.getRequestURL());
             filterChain.doFilter(request, response);
 
             return;
@@ -68,6 +68,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // SecurityContextHolder에 User 추가
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        log.info("username: {}, request: {} {}", username, request.getMethod(), request.getRequestURL());
 
         filterChain.doFilter(request, response);
     }
