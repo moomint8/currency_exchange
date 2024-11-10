@@ -22,9 +22,10 @@ public class JwtUtil {
         this.expiredMs = env.getProperty("token.expiration_time", Long.class);
     }
 
-    public String createToken(String username, String role) {
+    public String createToken(Long userId, String username, String role) {
 
         return Jwts.builder()
+                .claim("userId", userId)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -48,5 +49,9 @@ public class JwtUtil {
 
     public String getRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+    }
+
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 }
