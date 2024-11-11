@@ -3,6 +3,7 @@ package moomint.toy.currency_exchange.common.util;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -34,11 +35,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean isExpired(String token) {
+    public Boolean validateToken(String token) {
 
         try {
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException | SignatureException e) {
             return true;
         }
     }
