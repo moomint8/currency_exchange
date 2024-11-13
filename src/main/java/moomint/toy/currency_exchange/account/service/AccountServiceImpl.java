@@ -3,6 +3,7 @@ package moomint.toy.currency_exchange.account.service;
 import lombok.extern.slf4j.Slf4j;
 import moomint.toy.currency_exchange.account.domain.aggregate.entity.Account;
 import moomint.toy.currency_exchange.account.domain.repository.AccountRepository;
+import moomint.toy.currency_exchange.account.dto.AccountDTO;
 import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
 import moomint.toy.currency_exchange.user.domain.aggregate.entity.User;
 import moomint.toy.currency_exchange.user.service.AuthService;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -52,6 +55,32 @@ public class AccountServiceImpl implements AccountService {
 
         } catch (Exception e) {
             log.error("Error creating account {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public List<AccountDTO> getAllAccounts() throws NotLoggedInException {
+
+        try {
+            User user = User.builder()
+                    .id(authService.getCurrentUserInfo().id())
+                    .build();
+
+            List<Account> accounts = accountRepository.findAllByUserId(user.getId());
+
+            List<AccountDTO> accountDTOs = new ArrayList<>();
+
+            for (Account account : accounts) {
+                accountDTOs.add(new AccountDTO(account.getAccountNo(), account.getCurrency(), account.getBalance()));
+            }
+
+            log.info("userId: {} Get all accounts: {}", user.getId(), accountDTOs);
+
+            return accountDTOs;
+
+        } catch (Exception e) {
+            log.error("Error get all account {}", e.getMessage());
             throw e;
         }
     }
