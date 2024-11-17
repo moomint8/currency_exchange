@@ -42,19 +42,21 @@ public class JwtFilter extends OncePerRequestFilter {
         // Bearer 부분 제거 및 순수 토큰 획득
         String token = authorization.split(" ")[1];
 
-        // 토큰 유효 시간 검증
-        if (jwtUtil.isExpired(token)) {
+        // 토큰 유효성 검사
+        if (jwtUtil.validateToken(token)) {
 
-            log.info("token expired: {} {}", request.getMethod(), request.getRequestURL());
+            log.info("invalid token request: {} {}", request.getMethod(), request.getRequestURL());
             filterChain.doFilter(request, response);
 
             return;
         }
 
+        Long userId = jwtUtil.getUserId(token);
         String username = jwtUtil.getUsername(token);
         UserRole role = UserRole.valueOf(jwtUtil.getRole(token));
 
         User user = User.builder()
+                .id(userId)
                 .username(username)
                 .password("TempPassword")
                 .userRole(role)

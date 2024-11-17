@@ -3,6 +3,7 @@ package moomint.toy.currency_exchange.common.util;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +23,10 @@ public class JwtUtil {
         this.expiredMs = env.getProperty("token.expiration_time", Long.class);
     }
 
-    public String createToken(String username, String role) {
+    public String createToken(Long userId, String username, String role) {
 
         return Jwts.builder()
+                .claim("userId", userId)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -33,11 +35,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean isExpired(String token) {
+    public Boolean validateToken(String token) {
 
         try {
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException | SignatureException e) {
             return true;
         }
     }
@@ -48,5 +50,9 @@ public class JwtUtil {
 
     public String getRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+    }
+
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 }
