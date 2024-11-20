@@ -17,3 +17,7 @@
 - [ ] 환전
   - [ ] 원화 -> 달러
   - [ ] 달러 -> 원화
+### New Challenge
+- [x] GitHub PR Template
+- [ ] GitHub Action
+- [ ] Monolithic to MSA Migration
