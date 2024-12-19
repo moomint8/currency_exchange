@@ -1,0 +1,52 @@
+spring:
+  profiles:
+    active: ${RUN_PROFILE}
+  application:
+    name: user
+
+# jwt config
+token:
+  expiration_time: ${TOKEN_EXPIRATION_TIME}
+  secret: ${TOKEN_SECRET}
+
+# Local Database Config
+---
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${LOCAL_DB_URL}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
+
+    jpa:
+      generate-ddl: false
+      show-sql: true
+      database: mysql
+      properties:
+        hibernate:
+          '[format_sql]': true
+
+# GithubActions Database Config
+---
+spring:
+  config:
+    activate:
+      on-profile: ci
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
