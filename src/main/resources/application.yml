@@ -6,8 +6,10 @@ spring:
 
 # jwt config
 token:
-  expiration_time: ${TOKEN_EXPIRATION_TIME:3600}
-  secret: ${TOKEN_SECRET:default-secret}
+#  expiration_time: ${TOKEN_EXPIRATION_TIME:3600}
+#  secret: ${TOKEN_SECRET:default-secret}
+  expiration_time: 3600
+  secret: default-secret
 
 # Local Database Config
 ---
