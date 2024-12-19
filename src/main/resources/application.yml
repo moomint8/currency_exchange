@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${RUN_PROFILE}
+    active: h2
   application:
     name: user
 
