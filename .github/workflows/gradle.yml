@@ -24,19 +24,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-#      - name: Grant execute permission for Gradle Wrapper
-#        run: chmod +x ./gradlew
-
-#      - name: Set environment variables
-#        env:
-#          RUN_PROFILE: ${{ secrets.RUN_PROFILE }}
-#          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-#          TOKEN_EXPIRATION_TIME: ${{ secrets.TOKEN_EXPIRATION_TIME }}
-#        run: |
-#          echo "Environment variables set"
-
-      - name: Verify application.yml exists
-        run: cat src/main/resources/application.yml
+      - name: Grant execute permission for Gradle Wrapper
+        run: chmod +x ./gradlew
 
       - name: Run tests
         run: ./gradlew test
