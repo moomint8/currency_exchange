@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ci
+    active: ${RUN_PROFILE}
   application:
     name: user
 
