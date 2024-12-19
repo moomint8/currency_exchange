@@ -34,14 +34,11 @@ jobs:
           TOKEN_EXPIRATION_TIME: ${{ secrets.TOKEN_EXPIRATION_TIME }}
         run: |
           echo "Environment variables set"
-      #          echo "TOKEN_SECRET=${TOKEN_SECRET:0:3}****"
-      #          echo "TOKEN_EXPIRATION_TIME=${TOKEN_EXPIRATION_TIME:0:3}****"
 
       - name: Verify application.yml exists
         run: cat src/main/resources/application.yml
 
-      - name: Run tests with CI profile
-        #        run: ./gradlew test -Dspring.profiles.active=ci
+      - name: Run tests
         run: ./gradlew test
 
   dependency-submission:
