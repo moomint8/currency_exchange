@@ -15,5 +15,5 @@ spring:
     show-sql: true
 
 token:
-  expiration_time: ${TOKEN_EXPIRATION_TIME}
-  secret: ${TOKEN_SECRET}
+  expiration_time: ${TOKEN_EXPIRATION_TIME:3600}
+  secret: ${TOKEN_SECRET:default-secret}
