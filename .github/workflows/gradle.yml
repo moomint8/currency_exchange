@@ -34,7 +34,8 @@ jobs:
         run: echo "Environment variables set"
 
       - name: Run tests with CI profile
-        run: ./gradlew test -Dspring.profiles.active=ci
+#        run: ./gradlew test -Dspring.profiles.active=ci
+        run: ./gradlew test -Dspring.config.location=src/main/resources/application-ci.yml
 
   dependency-submission:
 
