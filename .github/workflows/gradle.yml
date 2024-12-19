@@ -40,6 +40,10 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
+        env:
+          RUN_PROFILE: ${{ secrets.RUN_PROFILE }}
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+          TOKEN_EXPIRATION_TIME: ${{ secrets.TOKEN_EXPIRATION_TIME }}
 
   dependency-submission:
 
