@@ -19,5 +19,5 @@
   - [ ] 달러 -> 원화
 ### New Challenge
 - [x] GitHub PR Template
-- [ ] GitHub Action
+- [x] GitHub Actions
 - [ ] Monolithic to MSA Migration
