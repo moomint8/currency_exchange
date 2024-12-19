@@ -34,10 +34,7 @@ jobs:
         run: |
           echo "Environment variables set"
           echo "TOKEN_SECRET=${TOKEN_SECRET:0:3}****"
-          echo "TOKEN_EXPIRATION_TIME=${TOKEN_EXPIRATION_TIME}"
-
-      - name: Check application-ci.yml exists
-        run: ls -al src/main/resources/
+          echo "TOKEN_EXPIRATION_TIME=${TOKEN_EXPIRATION_TIME:0:3}****"
 
       - name: Run tests with CI profile
 #        run: ./gradlew test -Dspring.profiles.active=ci
