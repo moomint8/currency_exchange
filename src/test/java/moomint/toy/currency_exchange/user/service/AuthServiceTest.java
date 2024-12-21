@@ -37,10 +37,12 @@ class AuthServiceTest {
         SignupDTO userinfo = new SignupDTO(USERNAME, PASSWORD, NAME, EMAIL);
 
         // when
-        String result = assertDoesNotThrow(() -> authService.signUp(userinfo));
+        UserInfoDTO result = assertDoesNotThrow(() -> authService.signUp(userinfo));
 
         // then
-        assertEquals(result, "회원가입 성공");
+        assertEquals(result.username(), userinfo.username());
+        assertEquals(result.name(), userinfo.name());
+        assertEquals(result.email(), userinfo.email());
     }
 
     @DisplayName("로그인 아이디 중복 예외 테스트")
