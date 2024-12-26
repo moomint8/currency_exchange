@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moomint.toy.currency_exchange.account.domain.aggregate.entity.Account;
 import moomint.toy.currency_exchange.account.domain.repository.AccountRepository;
 import moomint.toy.currency_exchange.account.dto.AccountDTO;
+import moomint.toy.currency_exchange.common.Exception.NotAccountOwnerException;
 import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
 import moomint.toy.currency_exchange.user.domain.aggregate.entity.User;
 import moomint.toy.currency_exchange.user.service.AuthService;
@@ -81,6 +82,30 @@ public class AccountServiceImpl implements AccountService {
 
         } catch (Exception e) {
             log.error("Error get all account {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public AccountDTO getAccount(String accountNo) throws NotLoggedInException, NotAccountOwnerException {
+
+        try {
+            User user = User.builder()
+                    .id(authService.getCurrentUserInfo().id())
+                    .build();
+
+            Account account = accountRepository.findByAccountNo(accountNo);
+
+            // 본인 계좌가 아닌 경우 예외 처리
+            if (user.getId() != account.getUser().getId()) {
+                log.warn("Unauthorized account access attempt detected. AccountNo: {}, UserId: {}", accountNo, user.getId());
+                throw new NotAccountOwnerException();
+            }
+
+            return new AccountDTO(account.getAccountNo(), account.getCurrency(), account.getBalance());
+
+        } catch (Exception e) {
+            log.error("Error get account by account no {}", e.getMessage());
             throw e;
         }
     }
