@@ -3,6 +3,7 @@ package moomint.toy.currency_exchange.account.service;
 import moomint.toy.currency_exchange.account.domain.repository.AccountRepository;
 import moomint.toy.currency_exchange.account.dto.AccountDTO;
 import moomint.toy.currency_exchange.common.Exception.DuplicateException;
+import moomint.toy.currency_exchange.common.Exception.NotAccountOwnerException;
 import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
 import moomint.toy.currency_exchange.commonSetting.CreateLoggedInUser;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,5 +63,37 @@ class AccountServiceTest {
         for (AccountDTO accountDTO : accountDTOs) {
             assertEquals(accountDTO.accountNo(), accounts.get(accountDTO.currency()));
         }
+    }
+
+    @DisplayName("계좌 번호를 이용한 계좌 조회 테스트")
+    @Test
+    void getAccountByAccountNoTest() throws DuplicateException, NotLoggedInException, NotAccountOwnerException {
+
+        // given
+        createLoggedInUser.settingNormal();
+        String accountNo = accountService.createAccount("KRW");
+
+        // when
+        AccountDTO accountDTO = accountService.getAccount(accountNo);
+
+        // then
+        assertEquals(accountNo, accountDTO.accountNo());
+        assertEquals(accountDTO.currency(), "KRW");
+        assertEquals(accountDTO.balance(), BigDecimal.ZERO);
+    }
+
+    @DisplayName("타인 계좌 조회 예외 테스트(계좌 번호 조회)")
+    @Test
+    void getOtherUsersAccountByAccountNoExceptionTest() throws DuplicateException, NotLoggedInException {
+
+        // given
+        createLoggedInUser.settingOtherUser();
+        String otherAccountNo = accountService.createAccount("KRW");
+
+        // when
+        createLoggedInUser.settingNormal();
+
+        // then
+        assertThrows(NotAccountOwnerException.class, () -> accountService.getAccount(otherAccountNo));
     }
 }
