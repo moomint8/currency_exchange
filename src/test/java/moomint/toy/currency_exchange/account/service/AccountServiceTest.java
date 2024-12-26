@@ -2,7 +2,9 @@ package moomint.toy.currency_exchange.account.service;
 
 import moomint.toy.currency_exchange.account.domain.repository.AccountRepository;
 import moomint.toy.currency_exchange.account.dto.AccountDTO;
+import moomint.toy.currency_exchange.account.dto.UpdateBalanceDTO;
 import moomint.toy.currency_exchange.common.Exception.DuplicateException;
+import moomint.toy.currency_exchange.common.Exception.InvalidCurrencyException;
 import moomint.toy.currency_exchange.common.Exception.NotAccountOwnerException;
 import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
 import moomint.toy.currency_exchange.commonSetting.CreateLoggedInUser;
@@ -65,35 +67,51 @@ class AccountServiceTest {
         }
     }
 
-//    @DisplayName("계좌 번호를 이용한 계좌 조회 테스트")
-//    @Test
-//    void getAccountByAccountByAccountNoNoTest() throws DuplicateException, NotLoggedInException, NotAccountOwnerException {
-//
-//        // given
-//        createLoggedInUser.settingNormal();
-//        String accountNo = accountService.createAccount("KRW");
-//
-//        // when
-//        AccountDTO accountDTO = accountService.getAccountByAccountNo(accountNo);
-//
-//        // then
-//        assertEquals(accountNo, accountDTO.accountNo());
-//        assertEquals(accountDTO.currency(), "KRW");
-//        assertEquals(accountDTO.balance(), BigDecimal.ZERO);
-//    }
-//
-//    @DisplayName("타인 계좌 조회 예외 테스트(계좌 번호 조회)")
-//    @Test
-//    void getOtherUsersAccountByAccountNoExceptionTest() throws DuplicateException, NotLoggedInException {
-//
-//        // given
-//        createLoggedInUser.settingOtherUser();
-//        String otherAccountNo = accountService.createAccount("KRW");
-//
-//        // when
-//        createLoggedInUser.settingNormal();
-//
-//        // then
-//        assertThrows(NotAccountOwnerException.class, () -> accountService.getAccountByAccountNo(otherAccountNo));
-//    }
+    @DisplayName("계좌 번호를 이용한 계좌 조회 테스트")
+    @Test
+    void getAccountByAccountByAccountNoNoTest() throws DuplicateException, NotLoggedInException, NotAccountOwnerException {
+
+        // given
+        createLoggedInUser.settingNormal();
+        String accountNo = accountService.createAccount("KRW");
+
+        // when
+        AccountDTO accountDTO = accountService.getAccountByAccountNo(accountNo);
+
+        // then
+        assertEquals(accountNo, accountDTO.accountNo());
+        assertEquals(accountDTO.currency(), "KRW");
+        assertEquals(accountDTO.balance(), BigDecimal.ZERO);
+    }
+
+    @DisplayName("타인 계좌 조회 예외 테스트(계좌 번호 조회)")
+    @Test
+    void getOtherUsersAccountByAccountNoExceptionTest() throws DuplicateException, NotLoggedInException {
+
+        // given
+        createLoggedInUser.settingOtherUser();
+        String otherAccountNo = accountService.createAccount("KRW");
+
+        // when
+        createLoggedInUser.settingNormal();
+
+        // then
+        assertThrows(NotAccountOwnerException.class, () -> accountService.getAccountByAccountNo(otherAccountNo));
+    }
+
+    @DisplayName("계좌 잔액 업데이트 기능 테스트")
+    @Test
+    void updateBalanceTest() throws DuplicateException, NotLoggedInException, NotAccountOwnerException, InvalidCurrencyException {
+
+        // given
+        createLoggedInUser.settingNormal();
+        String accountNo = accountService.createAccount("USD");
+        BigDecimal amount = new BigDecimal("100");
+
+        // when
+        accountService.updateBalance(new UpdateBalanceDTO(accountNo, "USD", amount));
+
+        // then
+        assertEquals(accountService.getAccountByAccountNo(accountNo).balance(), amount);
+    }
 }
