@@ -39,7 +39,7 @@ class TransactionServiceTest {
         createLoggedInUser.settingNormal();
         String accountNo = accountService.createAccount("USD");
         BigDecimal amount = new BigDecimal("100");
-        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.deposit, accountNo, "USD", amount);
+        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.DEPOSIT, accountNo, "USD", amount);
 
         // when
         TransactionResultDTO result = transactionService.deposit(transactionDTO);
@@ -61,7 +61,7 @@ class TransactionServiceTest {
         BigDecimal amount = new BigDecimal("100");
 
         // when
-        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.deposit, accountNo, "USD", amount);
+        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.DEPOSIT, accountNo, "USD", amount);
 
         // then
         assertThrows(InvalidCurrencyException.class, () -> transactionService.deposit(transactionDTO));
@@ -78,7 +78,7 @@ class TransactionServiceTest {
 
         // when
         createLoggedInUser.settingNormal();
-        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.deposit, otherAccountNo, "USD", amount);
+        TransactionDTO transactionDTO = new TransactionDTO(TransactionType.DEPOSIT, otherAccountNo, "USD", amount);
 
         // then
         assertThrows(NotAccountOwnerException.class, () -> transactionService.deposit(transactionDTO));

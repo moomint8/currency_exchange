@@ -136,6 +136,8 @@ public class AccountServiceImpl implements AccountService {
 
             account.updateBalance(account.getBalance().add(updateBalanceDTO.amount()));
 
+            accountRepository.save(account);
+
             log.info("Updated Account AccountNo: {}, Balance: {}", account.getAccountNo(), account.getBalance());
 
             return new AccountDTO(account.getAccountNo(), account.getCurrency(), account.getBalance());
