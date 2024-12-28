@@ -56,6 +56,10 @@ public class Account {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    public void updateBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     @Builder
     public Account(Long id, String accountNo, String currency, BigDecimal balance, LocalDateTime createdAt,
                    LocalDateTime updatedAt, LocalDateTime deletedAt, User user) {

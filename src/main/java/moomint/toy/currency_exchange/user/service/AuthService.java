@@ -6,6 +6,6 @@ import moomint.toy.currency_exchange.user.dto.SignupDTO;
 import moomint.toy.currency_exchange.user.dto.UserInfoDTO;
 
 public interface AuthService {
-    String signUp(SignupDTO userInfo) throws DuplicateException;
+    UserInfoDTO signUp(SignupDTO userInfo) throws DuplicateException;
     UserInfoDTO getCurrentUserInfo() throws NotLoggedInException;
 }

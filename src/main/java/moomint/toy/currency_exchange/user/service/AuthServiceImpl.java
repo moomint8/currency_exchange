@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String signUp(SignupDTO userInfo) throws DuplicateException {
+    public UserInfoDTO signUp(SignupDTO userInfo) throws DuplicateException {
 
         try {
 
@@ -56,7 +56,12 @@ public class AuthServiceImpl implements AuthService {
 
             log.info("Created new user [ id: {}, username: {} ]", user.getId(), user.getUsername());
 
-            return "회원가입 성공";
+            return new UserInfoDTO(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getName(),
+                    user.getEmail()
+            );
 
         } catch (DuplicateException e) {
             throw e;

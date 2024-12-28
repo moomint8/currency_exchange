@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import moomint.toy.currency_exchange.account.domain.aggregate.entity.Account;
 import moomint.toy.currency_exchange.account.domain.repository.AccountRepository;
 import moomint.toy.currency_exchange.account.dto.AccountDTO;
+import moomint.toy.currency_exchange.account.dto.UpdateBalanceDTO;
+import moomint.toy.currency_exchange.common.Exception.InvalidCurrencyException;
+import moomint.toy.currency_exchange.common.Exception.NotAccountOwnerException;
 import moomint.toy.currency_exchange.common.Exception.NotLoggedInException;
 import moomint.toy.currency_exchange.user.domain.aggregate.entity.User;
 import moomint.toy.currency_exchange.user.service.AuthService;
@@ -81,6 +84,66 @@ public class AccountServiceImpl implements AccountService {
 
         } catch (Exception e) {
             log.error("Error get all account {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public AccountDTO getAccountByAccountNo(String accountNo) throws NotLoggedInException, NotAccountOwnerException {
+
+        try {
+            User user = User.builder()
+                    .id(authService.getCurrentUserInfo().id())
+                    .build();
+
+            Account account = accountRepository.findByAccountNo(accountNo);
+
+            // 본인 계좌가 아닌 경우 예외 처리
+            if (user.getId() != account.getUser().getId()) {
+                log.warn("Unauthorized account access attempt detected. AccountNo: {}, UserId: {}", accountNo, user.getId());
+                throw new NotAccountOwnerException();
+            }
+
+            return new AccountDTO(account.getAccountNo(), account.getCurrency(), account.getBalance());
+
+        } catch (Exception e) {
+            log.error("Error get account by account no {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public AccountDTO updateBalance(UpdateBalanceDTO updateBalanceDTO) throws NotLoggedInException, NotAccountOwnerException, InvalidCurrencyException {
+
+        try {
+            User user = User.builder()
+                    .id(authService.getCurrentUserInfo().id())
+                    .build();
+
+            Account account = accountRepository.findByAccountNo(updateBalanceDTO.accountNo());
+
+            // 본인 계좌가 아닌 경우 예외 처리
+            if (user.getId() != account.getUser().getId()) {
+                log.warn("Unauthorized account access attempt detected when update balance. AccountNo: {}, UserId: {}", account.getAccountNo(), user.getId());
+                throw new NotAccountOwnerException();
+            }
+
+            // 통화 정보가 잘못된 경우 예외 처리
+            if (!updateBalanceDTO.currency().equals(account.getCurrency())) {
+                log.warn("Not matched currency. AccountNo: {}", account.getAccountNo());
+                throw new InvalidCurrencyException();
+            }
+
+            account.updateBalance(account.getBalance().add(updateBalanceDTO.amount()));
+
+            accountRepository.save(account);
+
+            log.info("Updated Account AccountNo: {}, Balance: {}", account.getAccountNo(), account.getBalance());
+
+            return new AccountDTO(account.getAccountNo(), account.getCurrency(), account.getBalance());
+
+        } catch (Exception e) {
+            log.error("Error update account {}", e.getMessage());
             throw e;
         }
     }
